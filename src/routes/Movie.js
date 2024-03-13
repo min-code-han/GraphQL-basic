@@ -15,12 +15,16 @@ export default function Movie() {
   // const params = useParams();
   const { id } = useParams();
 
-  const { data } = useQuery(GET_MOVIE, {
+  const { data, loading } = useQuery(GET_MOVIE, {
     variables: {
       // movieId: params.id,
       movieId: id,
     },
   });
-  console.log('data', data);
-  return <div>this is movie details</div>;
+
+  if (loading) {
+    return <h1>Loading Movie...</h1>;
+  }
+
+  return <div>{data.movie.title}</div>;
 }
