@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { gql } from 'graphql-tag';
+import { useEffect, useState } from 'react';
 
 const ALL_MOVIES = gql`
   query getMovies {
@@ -19,8 +20,20 @@ const ALL_MOVIES = gql`
 
 export default function Movies() {
   const { data, loading, error } = useQuery(ALL_MOVIES);
-  // 다른 데이터도 불러보기
-  // console.log('allTweets', data.allTweets);
+  const [title, setTitle] = useState('Hi 😀');
+
+  let index = 0;
+  useEffect(() => {
+    const titles = ["It's Movie List", 'Welcome'];
+    const changeTitle = () => {
+      setTitle(titles[index % titles.length]);
+      index++;
+    };
+
+    const intervalId = setInterval(changeTitle, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -30,16 +43,19 @@ export default function Movies() {
   }
 
   return (
-    <ul>
-      <h1>Movies</h1>
-      {data.allMovies.map((movie) => (
-        <li key={movie.id}>{movie.title}</li>
-      ))}
+    <>
+      <h1>{title}</h1>
+      <ul>
+        <h2>Movies</h2>
+        {data.allMovies.map((movie) => (
+          <li key={movie.id}>{movie.title}</li>
+        ))}
 
-      <h1>Tweets</h1>
-      {data.allTweets.map((tweet) => (
-        <li key={tweet.id}>{`${tweet.text} - ${tweet.author.fullName}`}</li>
-      ))}
-    </ul>
+        <h2>Tweets</h2>
+        {data.allTweets.map((tweet) => (
+          <li key={tweet.id}>{`${tweet.text} - ${tweet.author.fullName}`}</li>
+        ))}
+      </ul>
+    </>
   );
 }
